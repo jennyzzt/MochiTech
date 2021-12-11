@@ -1,0 +1,9 @@
+# virtual environment
+venv/
+
+# generated media files
+*/media/
+
+# tmp and cache files
+*~
+__pycache__
