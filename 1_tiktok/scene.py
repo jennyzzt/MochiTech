@@ -6,19 +6,44 @@ class VideoScene(Scene):
     def construct(self):
         self.next_section(skip_animations=False)
         intro_text = Text("How does TikTok decide your FYP?")
-        self.add(intro_text)
-        self.wait(1)
+        self.play(Write(intro_text))
         self.remove(intro_text)
+        self.wait()
 
         self.next_section("information collection", skip_animations=False)
         # TODO
         self.wait()
 
         self.next_section("user-item matrix", skip_animations=False)
-        useritem_matrix = self.create_ui_matrix()
-        self.add(useritem_matrix.scale(0.7))
-        self.play(FadeIn(Text("User-Item Matrix").scale(0.7).next_to(useritem_matrix, UP, buff=0.5)))
-        self.wait(1)
+        useritem_matrix, uim_vals = self.create_ui_matrix()
+        self.add(useritem_matrix.scale(0.6).shift(DOWN))
+        uim_text = Text("User-Item Matrix").scale(0.6).next_to(useritem_matrix, UP, buff=1.5)
+        self.play(Write(uim_text))
+        self.wait()
+        # brace users
+        br_users = Brace(useritem_matrix.submobjects[1], LEFT)
+        text_users = Text("users").scale(0.6).next_to(br_users, LEFT)
+        self.add(br_users, text_users)
+        self.wait()
+        # brace items
+        br_items = Brace(useritem_matrix.submobjects[2], UP)
+        text_items = Text("items").scale(0.6).next_to(br_items, UP)
+        self.add(br_items, text_items)
+        self.wait()
+        # box table contents
+        table_box = Square(color=YELLOW).surround(useritem_matrix.submobjects[0])
+        self.play(Create(table_box))
+        self.remove(table_box)
+        self.wait()
+        # highlight known ratings
+        anims = []
+        for i, row in enumerate(uim_vals):
+            for j, elem in enumerate(row):
+                if elem != 0:
+                    # TODO: bug that the highlighted cell is bigger than actual
+                    # TODO: pot fix is to iterate the table.elements and add a rectangle
+                    useritem_matrix.submobjects[0].add_highlighted_cell((i+1, j+1), color=RED)
+        self.wait()
 
     def create_ui_matrix(self):
         matrix_size = (5, 4)
@@ -55,4 +80,4 @@ class VideoScene(Scene):
 
         # group table and images together
         useritem_matrix = Group(table, row_img, col_img)
-        return useritem_matrix
+        return useritem_matrix, dummy_vals
