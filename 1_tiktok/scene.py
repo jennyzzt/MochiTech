@@ -8,15 +8,14 @@ class VideoScene(Scene):
         intro_text = Text("How does TikTok decide your FYP?")
         self.play(Write(intro_text))
         self.wait()
-        self.remove(intro_text)
-        self.wait()
+        self.clear()
 
         self.next_section("information collection", skip_animations=False)
         # TODO
         tmp_text = Text("TODO: Brief description of information collection").scale(0.5)
         self.add(tmp_text)
         self.wait()
-        self.remove(tmp_text)
+        self.clear()
 
         self.next_section("user-item matrix", skip_animations=False)
         useritem_matrix = self.create_ui_matrix()
@@ -43,21 +42,21 @@ class VideoScene(Scene):
         # highlight known ratings
         anims = []
         for entry in useritem_matrix.submobjects[0].get_entries():
-            if entry.text != "":
+            if entry.text != "?":
                 entry.set_color(RED)
         self.wait()
-        known_text = Text("known ratings R", t2c={"s R": RED}).scale(0.6).next_to(useritem_matrix, RIGHT)
+        known_text = Text("known ratings R", t2c={"[-3:]": RED}).scale(0.6).next_to(useritem_matrix, RIGHT)
         self.play(Write(known_text))
         # specify predicted ratings
         for entry in useritem_matrix.submobjects[0].get_entries():
-            if entry.text == "":
-                # TODO: animation not showing
-                entry.text = "?"
+            if entry.text == "?":
                 entry.set_color(BLUE)
-        predicted_text = Text("predicted ratings P", t2c={"s P": BLUE}).scale(0.6).next_to(known_text, DOWN).align_to(known_text, LEFT)
+        predicted_text = Text("predicted ratings P", t2c={"[-3:]": BLUE}).scale(0.6).next_to(known_text, DOWN).align_to(known_text, LEFT)
         self.play(Write(predicted_text))
+        self.clear()
 
         self.next_section("deep collaborative filtering", skip_animations=False)
+        self.play(Write("Deep Collaborative Filtering"))
         # TODO
 
     def create_ui_matrix(self):
@@ -75,7 +74,7 @@ class VideoScene(Scene):
         for i in range(matrix_size[1]):
             # ensure that every column has at least one value
             dummy_vals[np.random.randint(matrix_size[0])][i] = np.random.randint(1, 5)
-        poss_objs = [(Text(str(i)) if i > 0 else Text("")) for i in poss_vals]
+        poss_objs = [(Text(str(i)) if i > 0 else Text("?", color=BLACK)) for i in poss_vals]
         dummy_objs = [list(map(lambda v : poss_objs[int(v)].copy(), vs)) for vs in dummy_vals]
         table = MobjectTable(dummy_objs, include_outer_lines=False).scale(0.7)
 
