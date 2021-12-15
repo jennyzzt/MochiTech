@@ -18,6 +18,7 @@ class VideoScene(Scene):
         self.clear()
 
         self.next_section("user-item matrix", skip_animations=False)
+        # show user-item matrix
         useritem_matrix = self.create_ui_matrix()
         self.add(useritem_matrix.scale(0.6).shift(DOWN))
         uim_text = Text("User-Item Matrix").scale(0.6).next_to(useritem_matrix, UP, buff=1.5)
@@ -34,10 +35,10 @@ class VideoScene(Scene):
         self.add(br_items, text_items)
         self.wait()
         # box table contents
-        table_box = Square(color=YELLOW).surround(useritem_matrix.submobjects[0])
-        self.play(Create(table_box))
+        box_table = SurroundingRectangle(useritem_matrix.submobjects[0], color=YELLOW)
+        self.play(Create(box_table))
         self.wait()
-        self.remove(table_box)
+        self.remove(box_table)
         self.wait()
         # highlight known ratings
         anims = []
@@ -56,8 +57,22 @@ class VideoScene(Scene):
         self.clear()
 
         self.next_section("deep collaborative filtering", skip_animations=False)
-        self.play(Write("Deep Collaborative Filtering"))
-        # TODO
+        title_text = Text("Deep Collaborative Filtering")
+        self.play(Write(title_text))
+        self.play(title_text.animate.to_edge(UP))
+        # show user-item matrix
+        self.add(useritem_matrix)
+        self.add(uim_text.next_to(useritem_matrix, UP))
+        # user-user similarity
+        box_users = SurroundingRectangle(useritem_matrix.submobjects[1], color=YELLOW)
+        uu_text = Text("user-user similarity").scale(0.6).next_to(useritem_matrix, RIGHT)
+        self.play(Create(box_users), Write(uu_text))
+        self.wait()
+        # item-item similarity
+        box_items = SurroundingRectangle(useritem_matrix.submobjects[2], color=YELLOW)
+        ii_text = Text("item-item similarity").scale(0.6).next_to(known_text, DOWN).align_to(known_text, LEFT)
+        self.play(Create(box_items), Write(ii_text))
+        self.wait()
 
     def create_ui_matrix(self):
         matrix_size = (5, 4)
