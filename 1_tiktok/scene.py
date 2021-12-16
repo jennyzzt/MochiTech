@@ -4,20 +4,20 @@ import numpy as np
 
 class VideoScene(Scene):
     def construct(self):
-        self.next_section(skip_animations=False)
+        self.next_section(skip_animations=True)
         intro_text = Text("How does TikTok decide your FYP?")
         self.play(Write(intro_text))
         self.wait()
         self.clear()
 
-        self.next_section("information collection", skip_animations=False)
+        self.next_section("information collection", skip_animations=True)
         # TODO
         tmp_text = Text("TODO: Brief description of information collection").scale(0.5)
         self.add(tmp_text)
         self.wait()
         self.clear()
 
-        self.next_section("user-item matrix", skip_animations=False)
+        self.next_section("user-item matrix", skip_animations=True)
         # show user-item matrix
         useritem_matrix = self.create_ui_matrix()
         self.add(useritem_matrix.scale(0.6).shift(DOWN))
@@ -73,6 +73,23 @@ class VideoScene(Scene):
         ii_text = Text("item-item similarity").scale(0.6).next_to(known_text, DOWN).align_to(known_text, LEFT)
         self.play(Create(box_items), Write(ii_text))
         self.wait()
+
+        self.next_section("user based models", skip_animations=False)
+        self.remove(box_items, ii_text)
+        self.play(uu_text.animate.shift(DOWN))
+        uum_text = Text("User-based models", weight=BOLD).scale(0.6).next_to(uu_text, UP)
+        self.play(Write(uum_text))
+        # remove user-item matrix
+        self.remove(box_users, useritem_matrix, uim_text)
+        self.wait()
+        # add two users thinking of the same thing
+        user1_img = ImageMobject("./scene_images/user.png").scale(0.4).shift(DOWN + LEFT * 3)
+        user2_img= user1_img.copy().shift(RIGHT * 3)
+        thought_img = ImageMobject("./scene_images/thought.png").scale(0.5).shift(UP + LEFT * 1.5)
+        tree_img = ImageMobject("./scene_images/tree.png").scale(0.3).shift(UP + LEFT * 1.5)
+        self.add(user1_img, user2_img, thought_img, tree_img)
+        self.wait()
+        
 
     def create_ui_matrix(self):
         matrix_size = (5, 4)
