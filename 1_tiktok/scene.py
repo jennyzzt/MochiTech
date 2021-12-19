@@ -71,15 +71,16 @@ class VideoScene(Scene):
         self.wait()
         # item-item similarity
         box_items = SurroundingRectangle(useritem_matrix.submobjects[2], color=YELLOW)
-        ii_text = Text("item-item similarity").scale(0.6).next_to(known_text, DOWN).align_to(known_text, LEFT)
+        ii_text = Text("item-item similarity").scale(0.6).next_to(uu_text, DOWN).align_to(known_text, LEFT)
         self.play(Create(box_items), Write(ii_text))
         self.wait()
 
         self.next_section("user based models", skip_animations=False)
         self.remove(box_items, ii_text)
-        self.play(uu_text.animate.shift(DOWN))
+        self.play(uu_text.animate.move_to(ii_text))
         uum_text = Text("User-based models", weight=BOLD).scale(0.6).next_to(uu_text, UP)
         self.play(Write(uum_text))
+        self.wait()
         # remove user-item matrix
         self.remove(box_users, useritem_matrix, uim_text)
         self.wait()
@@ -110,7 +111,7 @@ class VideoScene(Scene):
         self.play(Transform(user1_img, userA_img))
         self.add(userA_text)
         userA_rating_text = Text("?", color=BLUE).next_to(userA, DOWN)
-        cactus_img = ImageMobject("./scene_images/cactus.png").scale(0.3).next_to(userA_rating_text, LEFT)
+        cactus_img = ImageMobject("./scene_images/cactus.png").scale(0.25).next_to(userA_rating_text, LEFT)
         self.play(Write(userA_rating_text), FadeIn(cactus_img))
         # users similar to user A
         user_img = ImageMobject("./scene_images/user.png").scale(0.2)
@@ -135,8 +136,52 @@ class VideoScene(Scene):
         new_userA_rating_text = Text(str(int(sum(peers_ratings)/len(peers_ratings))), color=BLUE, weight=BOLD).move_to(userA_rating_text)
         self.play(Transform(userA_rating_text, new_userA_rating_text))
         self.play(Uncreate(peers_ratings_text_box))
+        self.wait()
 
         self.next_section("item based models", skip_animations=False)
+        # remove user-based model stuff
+        self.remove(userA, userA_img, userA_text, user1_img, peers_img, br_peers, peers_text, peers_ratings_text, userA_rating_text, new_userA_rating_text, cactus_img)
+        self.wait()
+        # show user-item matrix
+        self.add(useritem_matrix, uim_text.next_to(useritem_matrix, UP))
+        self.wait()
+        # item-item similarity
+        iim_text = Text("Item-based models", weight=BOLD).scale(0.6).next_to(ii_text, UP)
+        self.play(Create(box_items), Transform(uu_text, ii_text), Transform(uum_text, iim_text))
+        self.wait()
+        # remove user-item matrix
+        self.remove(box_items, useritem_matrix, uim_text)
+        self.wait()
+        # unknown item X rating
+        itemX_img = ImageMobject("./scene_images/cactus.png").scale(0.25).shift(LEFT * 4)
+        itemX_text = Text("Item X", color=YELLOW).scale(0.6).next_to(itemX_img, UP)
+        itemX = Group(itemX_img, itemX_text)
+        self.add(itemX)
+        itemX_rating_text = Text("?", color=BLUE).next_to(itemX, DOWN)
+        user_img = ImageMobject("./scene_images/user.png").scale(0.2).next_to(itemX_rating_text, LEFT)
+        self.play(Write(itemX_rating_text), FadeIn(user_img))
+        # items similar to item X
+        peers_img = ImageMobject("./scene_images/plant0.png").scale(0.25).next_to(itemX_img, RIGHT, buff=0.7)
+        for i in range(1, 4):
+            peers_img.add(ImageMobject(f"./scene_images/plant{i}.png").scale(0.25).next_to(peers_img, RIGHT, buff=0.))
+        br_peers = Brace(peers_img, UP)
+        peers_text = Text("similar items").scale(0.6).next_to(br_peers, UP)
+        self.play(ShowIncreasingSubsets(peers_img), Write(peers_text))
+        self.add(br_peers)
+        self.wait()
+        # ratings of the peers
+        peers_ratings = [4, 5, 2, 5]
+        peers_ratings_text = Text(str(peers_ratings[0]), color=RED).next_to(peers_img, DOWN).align_to(peers_img, LEFT).shift(RIGHT*0.2)
+        for i in range(1, len(peers_ratings)):
+            peers_ratings_text.add(Text(str(peers_ratings[i]), color=RED).next_to(peers_img.submobjects[i-1], DOWN))
+        self.play(ShowIncreasingSubsets(peers_ratings_text))
+        self.wait()
+        # predict unknown item X rating
+        peers_ratings_text_box = SurroundingRectangle(peers_ratings_text, color=YELLOW, buff=0.2)
+        self.play(Create(peers_ratings_text_box))
+        new_itemX_rating_text = Text(str(int(sum(peers_ratings)/len(peers_ratings))), color=BLUE, weight=BOLD).move_to(itemX_rating_text)
+        self.play(Transform(itemX_rating_text, new_itemX_rating_text))
+        self.play(Uncreate(peers_ratings_text_box))
         self.wait()
 
     def create_ui_matrix(self):
