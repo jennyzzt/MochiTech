@@ -4,20 +4,20 @@ import numpy as np
 
 class VideoScene(Scene):
     def construct(self):
-        self.next_section(skip_animations=True)
+        self.next_section(skip_animations=False)
         intro_text = Text("How does TikTok decide your FYP?")
         self.play(Write(intro_text))
         self.wait()
         self.clear()
 
-        self.next_section("information collection", skip_animations=True)
+        self.next_section("information collection", skip_animations=False)
         # TODO
         tmp_text = Text("TODO: Brief description of information collection").scale(0.5)
         self.add(tmp_text)
         self.wait()
         self.clear()
 
-        self.next_section("user-item matrix", skip_animations=True)
+        self.next_section("user-item matrix", skip_animations=False)
         # show user-item matrix
         useritem_matrix = self.create_ui_matrix()
         self.add(useritem_matrix.scale(0.6).shift(DOWN))
@@ -54,6 +54,7 @@ class VideoScene(Scene):
                 entry.set_color(BLUE)
         predicted_text = Text("predicted ratings P", t2c={"[-3:]": BLUE}).scale(0.6).next_to(known_text, DOWN).align_to(known_text, LEFT)
         self.play(Write(predicted_text))
+        self.wait()
         self.clear()
 
         self.next_section("deep collaborative filtering", skip_animations=False)
@@ -89,7 +90,54 @@ class VideoScene(Scene):
         tree_img = ImageMobject("./scene_images/tree.png").scale(0.3).shift(UP + LEFT * 1.5)
         self.add(user1_img, user2_img, thought_img, tree_img)
         self.wait()
-        
+        thought_points1 = [
+            Dot(point=ORIGIN+LEFT*3+UR*0.25, radius = 0.08),
+            Dot(point=ORIGIN+UL*0.25, radius=0.08)
+        ]
+        self.add(*thought_points1)
+        self.wait(0.5)
+        thought_points2 = [
+            Dot(point=ORIGIN+LEFT*3+UR*0.5, radius = 0.1),
+            Dot(point=ORIGIN+UL*0.5, radius=0.1)
+        ]
+        self.add(*thought_points2)
+        self.wait(0.5)
+        self.remove(user2_img, thought_img, tree_img, *thought_points1, *thought_points2)
+        # unknown user A rating
+        userA_img = ImageMobject("./scene_images/user.png").scale(0.2).shift(LEFT * 4)
+        userA_text = Text("User A", color=YELLOW).scale(0.6).next_to(userA_img, UP)
+        userA = Group(userA_img, userA_text)
+        self.play(Transform(user1_img, userA_img))
+        self.add(userA_text)
+        userA_rating_text = Text("?", color=BLUE).next_to(userA, DOWN)
+        cactus_img = ImageMobject("./scene_images/cactus.png").scale(0.3).next_to(userA_rating_text, LEFT)
+        self.play(Write(userA_rating_text), FadeIn(cactus_img))
+        # users similar to user A
+        user_img = ImageMobject("./scene_images/user.png").scale(0.2)
+        peers_img = user_img.next_to(userA_img, RIGHT, buff=0.8).copy()
+        for _ in range(3):
+            peers_img.add(user_img.copy().next_to(peers_img, RIGHT))
+        br_peers = Brace(peers_img, UP)
+        peers_text = Text("similar interests").scale(0.6).next_to(br_peers, UP)
+        self.play(ShowIncreasingSubsets(peers_img), Write(peers_text))
+        self.add(br_peers)
+        self.wait()
+        # ratings of the peers
+        peers_ratings = [3, 4, 5, 4]
+        peers_ratings_text = Text(str(peers_ratings[0]), color=RED).next_to(peers_img, DOWN).align_to(peers_img, LEFT).shift(RIGHT*0.2)
+        for i in range(1, len(peers_ratings)):
+            peers_ratings_text.add(Text(str(peers_ratings[i]), color=RED).next_to(peers_img.submobjects[i-1], DOWN))
+        self.play(ShowIncreasingSubsets(peers_ratings_text))
+        self.wait()
+        # predict unknown user A rating
+        peers_ratings_text_box = SurroundingRectangle(peers_ratings_text, color=YELLOW, buff=0.2)
+        self.play(Create(peers_ratings_text_box))
+        new_userA_rating_text = Text(str(int(sum(peers_ratings)/len(peers_ratings))), color=BLUE, weight=BOLD).move_to(userA_rating_text)
+        self.play(Transform(userA_rating_text, new_userA_rating_text))
+        self.play(Uncreate(peers_ratings_text_box))
+
+        self.next_section("item based models", skip_animations=False)
+        self.wait()
 
     def create_ui_matrix(self):
         matrix_size = (5, 4)
