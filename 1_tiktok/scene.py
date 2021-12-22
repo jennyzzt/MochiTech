@@ -209,7 +209,7 @@ class VideoScene(Scene):
             "easy to interpret the outcome",
             font_size=35,
         ).next_to(advan_text, DOWN).align_to(advan_text, LEFT).shift(LEFT * 1.2)
-        self.play(advan_list)
+        self.play(ShowIncreasingSubsets(advan_list), runtime=5)
         self.wait()
         # disadvantages
         disadvan_text = Text("Disadvantages", color=YELLOW).scale(0.6).next_to(mb_text, DOWN).shift(RIGHT * 3)
@@ -220,7 +220,7 @@ class VideoScene(Scene):
             "limited coverage because of sparsity \\\of the user-item matrix",
             font_size=35,
         ).next_to(disadvan_text, DOWN).align_to(disadvan_text, LEFT).shift(LEFT * 1.2)
-        self.add(disadvan_list)
+        self.play(ShowIncreasingSubsets(disadvan_list), runtime=5)
         self.wait()
 
     def create_ui_matrix(self):
