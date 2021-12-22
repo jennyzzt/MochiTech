@@ -115,32 +115,32 @@ class VideoScene(Scene):
         self.play(Write(userA_rating_text), FadeIn(cactus_img))
         # users similar to user A
         user_img = ImageMobject("./scene_images/user.png").scale(0.2)
-        peers_img = user_img.next_to(userA_img, RIGHT, buff=0.8).copy()
+        user_peers_img = user_img.next_to(userA_img, RIGHT, buff=0.8).copy()
         for _ in range(3):
-            peers_img.add(user_img.copy().next_to(peers_img, RIGHT))
-        br_peers = Brace(peers_img, UP)
-        peers_text = Text("similar interests").scale(0.6).next_to(br_peers, UP)
-        self.play(ShowIncreasingSubsets(peers_img), Write(peers_text))
-        self.add(br_peers)
+            user_peers_img.add(user_img.copy().next_to(user_peers_img, RIGHT))
+        br_user_peers = Brace(user_peers_img, UP)
+        user_peers_text = Text("similar interests").scale(0.6).next_to(br_user_peers, UP)
+        self.play(ShowIncreasingSubsets(user_peers_img), Write(user_peers_text))
+        self.add(br_user_peers)
         self.wait()
         # ratings of the peers
-        peers_ratings = [3, 4, 5, 4]
-        peers_ratings_text = Text(str(peers_ratings[0]), color=RED).next_to(peers_img, DOWN).align_to(peers_img, LEFT).shift(RIGHT*0.2)
-        for i in range(1, len(peers_ratings)):
-            peers_ratings_text.add(Text(str(peers_ratings[i]), color=RED).next_to(peers_img.submobjects[i-1], DOWN))
-        self.play(ShowIncreasingSubsets(peers_ratings_text))
+        user_peers_ratings = [3, 4, 5, 4]
+        user_peers_ratings_text = Text(str(user_peers_ratings[0]), color=RED).next_to(user_peers_img, DOWN).align_to(user_peers_img, LEFT).shift(RIGHT*0.2)
+        for i in range(1, len(user_peers_ratings)):
+            user_peers_ratings_text.add(Text(str(user_peers_ratings[i]), color=RED).next_to(user_peers_img.submobjects[i-1], DOWN))
+        self.play(ShowIncreasingSubsets(user_peers_ratings_text))
         self.wait()
         # predict unknown user A rating
-        peers_ratings_text_box = SurroundingRectangle(peers_ratings_text, color=YELLOW, buff=0.2)
-        self.play(Create(peers_ratings_text_box))
-        new_userA_rating_text = Text(str(int(sum(peers_ratings)/len(peers_ratings))), color=BLUE, weight=BOLD).move_to(userA_rating_text)
+        user_peers_ratings_text_box = SurroundingRectangle(user_peers_ratings_text, color=YELLOW, buff=0.2)
+        self.play(Create(user_peers_ratings_text_box))
+        new_userA_rating_text = Text(str(int(sum(user_peers_ratings)/len(user_peers_ratings))), color=BLUE, weight=BOLD).move_to(userA_rating_text)
         self.play(Transform(userA_rating_text, new_userA_rating_text))
-        self.play(Uncreate(peers_ratings_text_box))
+        self.play(Uncreate(user_peers_ratings_text_box))
         self.wait()
 
         self.next_section("item based models", skip_animations=False)
         # remove user-based model stuff
-        self.remove(userA, userA_img, userA_text, user1_img, peers_img, br_peers, peers_text, peers_ratings_text, userA_rating_text, new_userA_rating_text, cactus_img)
+        self.remove(userA, userA_img, userA_text, user1_img, user_peers_img, br_user_peers, user_peers_text, user_peers_ratings_text, userA_rating_text, new_userA_rating_text, cactus_img)
         self.wait()
         # show user-item matrix
         self.add(useritem_matrix, uim_text.next_to(useritem_matrix, UP))
@@ -161,27 +161,64 @@ class VideoScene(Scene):
         user_img = ImageMobject("./scene_images/user.png").scale(0.2).next_to(itemX_rating_text, LEFT)
         self.play(Write(itemX_rating_text), FadeIn(user_img))
         # items similar to item X
-        peers_img = ImageMobject("./scene_images/plant0.png").scale(0.25).next_to(itemX_img, RIGHT, buff=0.7)
+        item_peers_img = ImageMobject("./scene_images/plant0.png").scale(0.25).next_to(itemX_img, RIGHT, buff=0.7)
         for i in range(1, 4):
-            peers_img.add(ImageMobject(f"./scene_images/plant{i}.png").scale(0.25).next_to(peers_img, RIGHT, buff=0.))
-        br_peers = Brace(peers_img, UP)
-        peers_text = Text("similar items").scale(0.6).next_to(br_peers, UP)
-        self.play(ShowIncreasingSubsets(peers_img), Write(peers_text))
-        self.add(br_peers)
+            item_peers_img.add(ImageMobject(f"./scene_images/plant{i}.png").scale(0.25).next_to(item_peers_img, RIGHT, buff=0.))
+        br_item_peers = Brace(item_peers_img, UP)
+        item_peers_text = Text("similar items").scale(0.6).next_to(br_item_peers, UP)
+        self.play(ShowIncreasingSubsets(item_peers_img), Write(item_peers_text))
+        self.add(br_item_peers)
         self.wait()
         # ratings of the peers
-        peers_ratings = [4, 5, 2, 5]
-        peers_ratings_text = Text(str(peers_ratings[0]), color=RED).next_to(peers_img, DOWN).align_to(peers_img, LEFT).shift(RIGHT*0.2)
-        for i in range(1, len(peers_ratings)):
-            peers_ratings_text.add(Text(str(peers_ratings[i]), color=RED).next_to(peers_img.submobjects[i-1], DOWN))
-        self.play(ShowIncreasingSubsets(peers_ratings_text))
+        item_peers_ratings = [4, 5, 2, 5]
+        item_peers_ratings_text = Text(str(item_peers_ratings[0]), color=RED).next_to(item_peers_img, DOWN).align_to(item_peers_img, LEFT).shift(RIGHT*0.2)
+        for i in range(1, len(item_peers_ratings)):
+            item_peers_ratings_text.add(Text(str(item_peers_ratings[i]), color=RED).next_to(item_peers_img.submobjects[i-1], DOWN))
+        self.play(ShowIncreasingSubsets(item_peers_ratings_text))
         self.wait()
         # predict unknown item X rating
-        peers_ratings_text_box = SurroundingRectangle(peers_ratings_text, color=YELLOW, buff=0.2)
-        self.play(Create(peers_ratings_text_box))
-        new_itemX_rating_text = Text(str(int(sum(peers_ratings)/len(peers_ratings))), color=BLUE, weight=BOLD).move_to(itemX_rating_text)
+        item_peers_ratings_text_box = SurroundingRectangle(item_peers_ratings_text, color=YELLOW, buff=0.2)
+        self.play(Create(item_peers_ratings_text_box))
+        new_itemX_rating_text = Text(str(int(sum(item_peers_ratings)/len(item_peers_ratings))), color=BLUE, weight=BOLD).move_to(itemX_rating_text)
         self.play(Transform(itemX_rating_text, new_itemX_rating_text))
-        self.play(Uncreate(peers_ratings_text_box))
+        self.play(Uncreate(item_peers_ratings_text_box))
+        self.wait(2)
+
+        self.next_section("advatnages and disadvantages", skip_animations=False)
+        # add back user-based stuff
+        user_based_group = Group(userA, user_peers_img, br_user_peers, user_peers_text, user_peers_ratings_text, userA_rating_text, new_userA_rating_text, cactus_img, iim_text, ii_text)
+        self.add(user_based_group.next_to(item_peers_ratings_text, DOWN).align_to(user_img, LEFT))
+        self.wait(2)
+        # remove item-based and user-based stuff
+        self.remove(userA, user_peers_img, br_user_peers, user_peers_text, user_peers_ratings_text, userA_rating_text, new_userA_rating_text, cactus_img, ii_text,
+                    itemX, item_peers_img, br_item_peers, item_peers_text, item_peers_ratings_text, itemX_rating_text, new_itemX_rating_text, user_img, uu_text,)
+        self.wait(2)
+        # memory-based models
+        mb_text = Text("Memory-based models", weight=BOLD).scale(0.8).next_to(title_text, DOWN)
+        self.play(Transform(Group(uum_text, iim_text), mb_text))
+        self.wait()
+        # advantages
+        advan_text = Text("Advatages", color=YELLOW).scale(0.6).next_to(mb_text, DOWN).shift(LEFT * 3)
+        self.play(Write(advan_text))
+        self.wait()
+        advan_list = BulletedList(
+            "simple and intuitive",
+            "easy to justify why a specific item \nis recommended",
+            "easy to interpret the outcome",
+            height=3.0, width=4.0,
+        ).next_to(advan_text, DOWN)
+        self.add(advan_list)
+        self.wait()
+        # disadvantages
+        disadvan_text = Text("Disadvatages", color=YELLOW).scale(0.6).next_to(mb_text, DOWN).shift(RIGHT * 3)
+        self.play(Write(disadvan_text))
+        self.wait()
+        disadvan_list = BulletedList(
+            "the need to group similar users or items together can be computationally costly",
+            "limited coverage because of sparsity of the user rating matrix",
+            height=3.0, width=4.0,
+        ).next_to(disadvan_text, DOWN)
+        self.add(disadvan_list)
         self.wait()
 
     def create_ui_matrix(self):
