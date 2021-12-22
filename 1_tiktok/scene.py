@@ -108,7 +108,7 @@ class VideoScene(Scene):
         userA_img = ImageMobject("./scene_images/user.png").scale(0.2).shift(LEFT * 4)
         userA_text = Text("User A", color=YELLOW).scale(0.6).next_to(userA_img, UP)
         userA = Group(userA_img, userA_text)
-        self.play(Transform(user1_img, userA_img))
+        self.play(ReplacementTransform(user1_img, userA_img))
         self.add(userA_text)
         userA_rating_text = Text("?", color=BLUE).next_to(userA, DOWN)
         cactus_img = ImageMobject("./scene_images/cactus.png").scale(0.25).next_to(userA_rating_text, LEFT)
@@ -134,7 +134,7 @@ class VideoScene(Scene):
         user_peers_ratings_text_box = SurroundingRectangle(user_peers_ratings_text, color=YELLOW, buff=0.2)
         self.play(Create(user_peers_ratings_text_box))
         new_userA_rating_text = Text(str(int(sum(user_peers_ratings)/len(user_peers_ratings))), color=BLUE, weight=BOLD).move_to(userA_rating_text)
-        self.play(Transform(userA_rating_text, new_userA_rating_text))
+        self.play(ReplacementTransform(userA_rating_text, new_userA_rating_text))
         self.play(Uncreate(user_peers_ratings_text_box))
         self.wait()
 
@@ -147,7 +147,7 @@ class VideoScene(Scene):
         self.wait()
         # item-item similarity
         iim_text = Text("Item-based models", weight=BOLD).scale(0.6).next_to(ii_text, UP)
-        self.play(Create(box_items), Transform(uu_text, ii_text), Transform(uum_text, iim_text))
+        self.play(Create(box_items), ReplacementTransform(uu_text, ii_text), ReplacementTransform(uum_text, iim_text))
         self.wait()
         # remove user-item matrix
         self.remove(box_items, useritem_matrix, uim_text)
@@ -180,44 +180,46 @@ class VideoScene(Scene):
         item_peers_ratings_text_box = SurroundingRectangle(item_peers_ratings_text, color=YELLOW, buff=0.2)
         self.play(Create(item_peers_ratings_text_box))
         new_itemX_rating_text = Text(str(int(sum(item_peers_ratings)/len(item_peers_ratings))), color=BLUE, weight=BOLD).move_to(itemX_rating_text)
-        self.play(Transform(itemX_rating_text, new_itemX_rating_text))
+        self.play(ReplacementTransform(itemX_rating_text, new_itemX_rating_text))
         self.play(Uncreate(item_peers_ratings_text_box))
         self.wait(2)
 
-        self.next_section("advatnages and disadvantages", skip_animations=False)
+        self.next_section("advantages and disadvantages", skip_animations=False)
         # add back user-based stuff
-        user_based_group = Group(userA, user_peers_img, br_user_peers, user_peers_text, user_peers_ratings_text, userA_rating_text, new_userA_rating_text, cactus_img, iim_text, ii_text)
+        uu_text = Text("user-user similarity").scale(0.6).move_to(ii_text)
+        uum_text = Text("User-based models", weight=BOLD).scale(0.6).move_to(iim_text)
+        user_based_group = Group(userA, user_peers_img, br_user_peers, user_peers_text, user_peers_ratings_text, userA_rating_text, new_userA_rating_text, cactus_img, uum_text, uu_text)
         self.add(user_based_group.next_to(item_peers_ratings_text, DOWN).align_to(user_img, LEFT))
         self.wait(2)
         # remove item-based and user-based stuff
         self.remove(userA, user_peers_img, br_user_peers, user_peers_text, user_peers_ratings_text, userA_rating_text, new_userA_rating_text, cactus_img, ii_text,
-                    itemX, item_peers_img, br_item_peers, item_peers_text, item_peers_ratings_text, itemX_rating_text, new_itemX_rating_text, user_img, uu_text,)
+                    itemX, item_peers_img, br_item_peers, item_peers_text, item_peers_ratings_text, itemX_rating_text, new_itemX_rating_text, user_img, uu_text)
         self.wait(2)
         # memory-based models
         mb_text = Text("Memory-based models", weight=BOLD).scale(0.8).next_to(title_text, DOWN)
-        self.play(Transform(Group(uum_text, iim_text), mb_text))
+        self.play(ReplacementTransform(Group(uum_text, iim_text), mb_text))
         self.wait()
         # advantages
-        advan_text = Text("Advatages", color=YELLOW).scale(0.6).next_to(mb_text, DOWN).shift(LEFT * 3)
+        advan_text = Text("Advantages", color=YELLOW).scale(0.6).next_to(mb_text, DOWN).shift(LEFT * 3)
         self.play(Write(advan_text))
         self.wait()
         advan_list = BulletedList(
             "simple and intuitive",
-            "easy to justify why a specific item \nis recommended",
+            "easy to justify why a specific \\\item is recommended",
             "easy to interpret the outcome",
-            height=3.0, width=4.0,
-        ).next_to(advan_text, DOWN)
-        self.add(advan_list)
+            font_size=35,
+        ).next_to(advan_text, DOWN).align_to(advan_text, LEFT).shift(LEFT * 1.2)
+        self.play(advan_list)
         self.wait()
         # disadvantages
-        disadvan_text = Text("Disadvatages", color=YELLOW).scale(0.6).next_to(mb_text, DOWN).shift(RIGHT * 3)
+        disadvan_text = Text("Disadvantages", color=YELLOW).scale(0.6).next_to(mb_text, DOWN).shift(RIGHT * 3)
         self.play(Write(disadvan_text))
         self.wait()
         disadvan_list = BulletedList(
-            "the need to group similar users or items together can be computationally costly",
-            "limited coverage because of sparsity of the user rating matrix",
-            height=3.0, width=4.0,
-        ).next_to(disadvan_text, DOWN)
+            "grouping similar users or items \\\can be computationally costly",
+            "limited coverage because of sparsity \\\of the user-item matrix",
+            font_size=35,
+        ).next_to(disadvan_text, DOWN).align_to(disadvan_text, LEFT).shift(LEFT * 1.2)
         self.add(disadvan_list)
         self.wait()
 
