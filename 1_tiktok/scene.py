@@ -7,7 +7,7 @@ class VideoScene(Scene):
         self.next_section(skip_animations=False)
         intro_text = Text("How does TikTok decide your FYP?")
         self.play(Write(intro_text))
-        self.wait()
+        self.wait(2)
         self.clear()
 
         self.next_section("information collection", skip_animations=False)
@@ -23,7 +23,7 @@ class VideoScene(Scene):
         self.add(useritem_matrix.scale(0.6).shift(DOWN))
         uim_text = Text("User-Item Matrix").scale(0.6).next_to(useritem_matrix, UP, buff=1.5)
         self.play(Write(uim_text))
-        self.wait()
+        self.wait(3)
         # brace users
         br_users = Brace(useritem_matrix.submobjects[1], LEFT)
         text_users = Text("users").scale(0.6).next_to(br_users, LEFT)
@@ -37,7 +37,7 @@ class VideoScene(Scene):
         # box table contents
         box_table = SurroundingRectangle(useritem_matrix.submobjects[0], color=YELLOW)
         self.play(Create(box_table))
-        self.wait()
+        self.wait(5)
         self.remove(box_table)
         self.wait()
         # highlight known ratings
@@ -45,21 +45,23 @@ class VideoScene(Scene):
         for entry in useritem_matrix.submobjects[0].get_entries():
             if entry.text != "?":
                 entry.set_color(RED)
-        self.wait()
+        self.wait(3)
         known_text = Text("known ratings R", t2c={"[-3:]": RED}).scale(0.6).next_to(useritem_matrix, RIGHT)
         self.play(Write(known_text))
+        self.wait(2)
         # specify predicted ratings
         for entry in useritem_matrix.submobjects[0].get_entries():
             if entry.text == "?":
                 entry.set_color(BLUE)
         predicted_text = Text("predicted ratings P", t2c={"[-3:]": BLUE}).scale(0.6).next_to(known_text, DOWN).align_to(known_text, LEFT)
         self.play(Write(predicted_text))
-        self.wait()
+        self.wait(2)
         self.clear()
 
         self.next_section("deep collaborative filtering", skip_animations=False)
         title_text = Text("Deep Collaborative Filtering")
         self.play(Write(title_text))
+        self.wait()
         self.play(title_text.animate.to_edge(UP))
         # show user-item matrix
         self.add(useritem_matrix)
@@ -68,22 +70,22 @@ class VideoScene(Scene):
         box_users = SurroundingRectangle(useritem_matrix.submobjects[1], color=YELLOW)
         uu_text = Text("user-user similarity").scale(0.6).next_to(useritem_matrix, RIGHT)
         self.play(Create(box_users), Write(uu_text))
-        self.wait()
+        self.wait(2)
         # item-item similarity
         box_items = SurroundingRectangle(useritem_matrix.submobjects[2], color=YELLOW)
         ii_text = Text("item-item similarity").scale(0.6).next_to(uu_text, DOWN).align_to(known_text, LEFT)
         self.play(Create(box_items), Write(ii_text))
-        self.wait()
+        self.wait(2)
 
         self.next_section("user based models", skip_animations=False)
         self.remove(box_items, ii_text)
+        self.wait(2)
         self.play(uu_text.animate.move_to(ii_text))
         uum_text = Text("User-based models", weight=BOLD).scale(0.6).next_to(uu_text, UP)
         self.play(Write(uum_text))
         self.wait()
         # remove user-item matrix
         self.remove(box_users, useritem_matrix, uim_text)
-        self.wait()
         # add two users thinking of the same thing
         user1_img = ImageMobject("./scene_images/user.png").scale(0.4).shift(DOWN + LEFT * 3)
         user2_img= user1_img.copy().shift(RIGHT * 3)
@@ -102,7 +104,7 @@ class VideoScene(Scene):
             Dot(point=ORIGIN+UL*0.5, radius=0.1)
         ]
         self.add(*thought_points2)
-        self.wait(0.5)
+        self.wait(3)
         self.remove(user2_img, thought_img, tree_img, *thought_points1, *thought_points2)
         # unknown user A rating
         userA_img = ImageMobject("./scene_images/user.png").scale(0.2).shift(LEFT * 4)
@@ -113,6 +115,7 @@ class VideoScene(Scene):
         userA_rating_text = Text("?", color=BLUE).next_to(userA, DOWN)
         cactus_img = ImageMobject("./scene_images/cactus.png").scale(0.25).next_to(userA_rating_text, LEFT)
         self.play(Write(userA_rating_text), FadeIn(cactus_img))
+        self.wait(6)
         # users similar to user A
         user_img = ImageMobject("./scene_images/user.png").scale(0.2)
         user_peers_img = user_img.next_to(userA_img, RIGHT, buff=0.8).copy()
@@ -122,21 +125,21 @@ class VideoScene(Scene):
         user_peers_text = Text("similar interests").scale(0.6).next_to(br_user_peers, UP)
         self.play(ShowIncreasingSubsets(user_peers_img), Write(user_peers_text))
         self.add(br_user_peers)
-        self.wait()
+        self.wait(2)
         # ratings of the peers
         user_peers_ratings = [3, 4, 5, 4]
         user_peers_ratings_text = Text(str(user_peers_ratings[0]), color=RED).next_to(user_peers_img, DOWN).align_to(user_peers_img, LEFT).shift(RIGHT*0.2)
         for i in range(1, len(user_peers_ratings)):
             user_peers_ratings_text.add(Text(str(user_peers_ratings[i]), color=RED).next_to(user_peers_img.submobjects[i-1], DOWN))
         self.play(ShowIncreasingSubsets(user_peers_ratings_text))
-        self.wait()
         # predict unknown user A rating
         user_peers_ratings_text_box = SurroundingRectangle(user_peers_ratings_text, color=YELLOW, buff=0.2)
         self.play(Create(user_peers_ratings_text_box))
+        self.wait()
         new_userA_rating_text = Text(str(int(sum(user_peers_ratings)/len(user_peers_ratings))), color=BLUE, weight=BOLD).move_to(userA_rating_text)
         self.play(ReplacementTransform(userA_rating_text, new_userA_rating_text))
         self.play(Uncreate(user_peers_ratings_text_box))
-        self.wait()
+        self.wait(3)
 
         self.next_section("item based models", skip_animations=False)
         # remove user-based model stuff
@@ -148,7 +151,7 @@ class VideoScene(Scene):
         # item-item similarity
         iim_text = Text("Item-based models", weight=BOLD).scale(0.6).next_to(ii_text, UP)
         self.play(Create(box_items), ReplacementTransform(uu_text, ii_text), ReplacementTransform(uum_text, iim_text))
-        self.wait()
+        self.wait(2)
         # remove user-item matrix
         self.remove(box_items, useritem_matrix, uim_text)
         self.wait()
@@ -160,6 +163,7 @@ class VideoScene(Scene):
         itemX_rating_text = Text("?", color=BLUE).next_to(itemX, DOWN)
         user_img = ImageMobject("./scene_images/user.png").scale(0.2).next_to(itemX_rating_text, LEFT)
         self.play(Write(itemX_rating_text), FadeIn(user_img))
+        self.wait(5)
         # items similar to item X
         item_peers_img = ImageMobject("./scene_images/plant0.png").scale(0.25).next_to(itemX_img, RIGHT, buff=0.7)
         for i in range(1, 4):
@@ -168,21 +172,21 @@ class VideoScene(Scene):
         item_peers_text = Text("similar items").scale(0.6).next_to(br_item_peers, UP)
         self.play(ShowIncreasingSubsets(item_peers_img), Write(item_peers_text))
         self.add(br_item_peers)
-        self.wait()
+        self.wait(3)
         # ratings of the peers
         item_peers_ratings = [4, 5, 2, 5]
         item_peers_ratings_text = Text(str(item_peers_ratings[0]), color=RED).next_to(item_peers_img, DOWN).align_to(item_peers_img, LEFT).shift(RIGHT*0.2)
         for i in range(1, len(item_peers_ratings)):
             item_peers_ratings_text.add(Text(str(item_peers_ratings[i]), color=RED).next_to(item_peers_img.submobjects[i-1], DOWN))
         self.play(ShowIncreasingSubsets(item_peers_ratings_text))
-        self.wait()
+        self.wait(2)
         # predict unknown item X rating
         item_peers_ratings_text_box = SurroundingRectangle(item_peers_ratings_text, color=YELLOW, buff=0.2)
         self.play(Create(item_peers_ratings_text_box))
         new_itemX_rating_text = Text(str(int(sum(item_peers_ratings)/len(item_peers_ratings))), color=BLUE, weight=BOLD).move_to(itemX_rating_text)
         self.play(ReplacementTransform(itemX_rating_text, new_itemX_rating_text))
         self.play(Uncreate(item_peers_ratings_text_box))
-        self.wait(2)
+        self.wait(6)
 
         self.next_section("advantages and disadvantages", skip_animations=False)
         # add back user-based stuff
@@ -194,11 +198,11 @@ class VideoScene(Scene):
         # remove item-based and user-based stuff
         self.remove(userA, user_peers_img, br_user_peers, user_peers_text, user_peers_ratings_text, userA_rating_text, new_userA_rating_text, cactus_img, ii_text,
                     itemX, item_peers_img, br_item_peers, item_peers_text, item_peers_ratings_text, itemX_rating_text, new_itemX_rating_text, user_img, uu_text)
-        self.wait(2)
+        self.wait()
         # memory-based models
         mb_text = Text("Memory-based models", weight=BOLD).scale(0.8).next_to(title_text, DOWN)
         self.play(ReplacementTransform(Group(uum_text, iim_text), mb_text))
-        self.wait()
+        self.wait(2)
         # advantages
         advan_text = Text("Advantages", color=YELLOW).scale(0.6).next_to(mb_text, DOWN).shift(LEFT * 3)
         self.play(Write(advan_text))
@@ -209,8 +213,8 @@ class VideoScene(Scene):
             "easy to interpret the outcome",
             font_size=35,
         ).next_to(advan_text, DOWN).align_to(advan_text, LEFT).shift(LEFT * 1.2)
-        self.play(ShowIncreasingSubsets(advan_list), runtime=5)
-        self.wait()
+        self.play(ShowIncreasingSubsets(advan_list))
+        self.wait(9)
         # disadvantages
         disadvan_text = Text("Disadvantages", color=YELLOW).scale(0.6).next_to(mb_text, DOWN).shift(RIGHT * 3)
         self.play(Write(disadvan_text))
@@ -220,8 +224,8 @@ class VideoScene(Scene):
             "limited coverage because of sparsity \\\of the user-item matrix",
             font_size=35,
         ).next_to(disadvan_text, DOWN).align_to(disadvan_text, LEFT).shift(LEFT * 1.2)
-        self.play(ShowIncreasingSubsets(disadvan_list), runtime=5)
-        self.wait()
+        self.play(ShowIncreasingSubsets(disadvan_list))
+        self.wait(11)
 
     def create_ui_matrix(self):
         matrix_size = (5, 4)
