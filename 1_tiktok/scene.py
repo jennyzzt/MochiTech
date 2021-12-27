@@ -11,10 +11,26 @@ class VideoScene(Scene):
         self.clear()
 
         self.next_section("information collection", skip_animations=False)
-        # TODO
-        tmp_text = Text("TODO: Brief description of information collection").scale(0.5)
-        self.add(tmp_text)
+        # instance of tiktok video
+        tiktok_img = ImageMobject("./scene_images/tiktok.jpg")
+        self.add(tiktok_img)
+        self.wait(2)
+        circle = Circle(radius=0.4, color=YELLOW, fill_opacity=0.4).shift(RIGHT * 1.8 + DOWN * 0.3)
+        self.play(FadeIn(circle))
+        box = Rectangle(height=1.5, width=3.5, color=YELLOW).shift(DOWN * 3.2 + LEFT * 0.6)
+        self.play(Create(box))
+        self.wait(4)
+        # other tiktok videos
+        self.remove(circle, box)
+        self.play(tiktok_img.animate.scale(0.3))
+        tiktok_imgs = [ImageMobject(f"./scene_images/tiktok{n+1}.jpg").scale(0.3) for n in range(15)]
+        tiktok_imgs_grp = Group(tiktok_img, *tiktok_imgs).arrange_in_grid(rows=2).move_to(ORIGIN)
+        self.play(ShowIncreasingSubsets(tiktok_imgs_grp, run_time=5.0))
         self.wait()
+        # machine learning problem
+        ml_text = Text("Machine Learning problem?")
+        self.play(Write(ml_text))
+        self.wait(3)
         self.clear()
 
         self.next_section("user-item matrix", skip_animations=False)
@@ -213,8 +229,12 @@ class VideoScene(Scene):
             "easy to interpret the outcome",
             font_size=35,
         ).next_to(advan_text, DOWN).align_to(advan_text, LEFT).shift(LEFT * 1.2)
-        self.play(ShowIncreasingSubsets(advan_list))
-        self.wait(9)
+        self.add(advan_list.submobjects[0])
+        self.wait(3)
+        self.add(advan_list.submobjects[1])
+        self.wait(5)
+        self.add(advan_list.submobjects[2])
+        self.wait(4)
         # disadvantages
         disadvan_text = Text("Disadvantages", color=YELLOW).scale(0.6).next_to(mb_text, DOWN).shift(RIGHT * 3)
         self.play(Write(disadvan_text))
@@ -224,8 +244,10 @@ class VideoScene(Scene):
             "limited coverage because of sparsity \\\of the user-item matrix",
             font_size=35,
         ).next_to(disadvan_text, DOWN).align_to(disadvan_text, LEFT).shift(LEFT * 1.2)
-        self.play(ShowIncreasingSubsets(disadvan_list))
-        self.wait(11)
+        self.add(disadvan_list.submobjects[0])
+        self.wait(5)
+        self.add(disadvan_list.submobjects[1])
+        self.wait(6)
 
     def create_ui_matrix(self):
         matrix_size = (5, 4)
