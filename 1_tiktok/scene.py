@@ -1,5 +1,6 @@
 from manim import *
 import numpy as np
+import networkx as nx
 
 
 class VideoScene(Scene):
@@ -230,11 +231,11 @@ class VideoScene(Scene):
             font_size=35,
         ).next_to(advan_text, DOWN).align_to(advan_text, LEFT).shift(LEFT * 1.2)
         self.add(advan_list.submobjects[0])
-        self.wait(3)
+        self.wait(2)
         self.add(advan_list.submobjects[1])
-        self.wait(5)
-        self.add(advan_list.submobjects[2])
         self.wait(4)
+        self.add(advan_list.submobjects[2])
+        self.wait(3)
         # disadvantages
         disadvan_text = Text("Disadvantages", color=YELLOW).scale(0.6).next_to(mb_text, DOWN).shift(RIGHT * 3)
         self.play(Write(disadvan_text))
@@ -245,9 +246,30 @@ class VideoScene(Scene):
             font_size=35,
         ).next_to(disadvan_text, DOWN).align_to(disadvan_text, LEFT).shift(LEFT * 1.2)
         self.add(disadvan_list.submobjects[0])
-        self.wait(5)
+        self.wait(4)
         self.add(disadvan_list.submobjects[1])
-        self.wait(6)
+        self.wait(5)
+
+        self.next_section("transition to next part", skip_animations=False)
+        # remove advantages and disadvantages
+        self.remove(advan_text, *advan_list.submobjects, disadvan_text, *disadvan_list.submobjects)
+        fyp_text = Text("TikTok FYP algorithm").move_to(title_text.get_center())
+        self.play(ReplacementTransform(Group(title_text, mb_text), fyp_text))
+        # create web graph
+        nxgraph = nx.barabasi_albert_graph(40, 2, seed=6)
+        g = Graph.from_networkx(nxgraph, layout="kamada_kawai", layout_scale=2.5)
+        self.play(Create(g), run_time=3.0)
+        # traverse from inner node to outer node
+        self.play(g[1].animate.set_fill(RED))
+        self.play(g.edges[(1, 4)].animate.set_color(RED))
+        self.play(g[4].animate.set_fill(RED))
+        self.play(g.edges[(4, 12)].animate.set_color(RED))
+        self.play(g[12].animate.set_fill(RED))
+        self.play(g.edges[(12, 29)].animate.set_color(RED))
+        self.play(g[29].animate.set_fill(RED))
+        # change graph layout for fun
+        self.play(g.animate.change_layout("spectral"))
+        self.wait()
 
     def create_ui_matrix(self):
         matrix_size = (5, 4)
