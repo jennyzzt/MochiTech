@@ -40,7 +40,7 @@ class VideoScene(Scene):
         self.add(useritem_matrix.scale(0.6).shift(DOWN))
         uim_text = Text("User-Item Matrix").scale(0.6).next_to(useritem_matrix, UP, buff=1.5)
         self.play(Write(uim_text))
-        self.wait(3)
+        self.wait()
         # brace users
         br_users = Brace(useritem_matrix.submobjects[1], LEFT)
         text_users = Text("users").scale(0.6).next_to(br_users, LEFT)
@@ -219,7 +219,7 @@ class VideoScene(Scene):
         # memory-based models
         mb_text = Text("Memory-based models", weight=BOLD).scale(0.8).next_to(title_text, DOWN)
         self.play(ReplacementTransform(Group(uum_text, iim_text), mb_text))
-        self.wait(2)
+        self.wait(3)
         # advantages
         advan_text = Text("Advantages", color=YELLOW).scale(0.6).next_to(mb_text, DOWN).shift(LEFT * 3)
         self.play(Write(advan_text))
@@ -235,7 +235,7 @@ class VideoScene(Scene):
         self.add(advan_list.submobjects[1])
         self.wait(4)
         self.add(advan_list.submobjects[2])
-        self.wait(3)
+        self.wait(4)
         # disadvantages
         disadvan_text = Text("Disadvantages", color=YELLOW).scale(0.6).next_to(mb_text, DOWN).shift(RIGHT * 3)
         self.play(Write(disadvan_text))
@@ -246,7 +246,7 @@ class VideoScene(Scene):
             font_size=35,
         ).next_to(disadvan_text, DOWN).align_to(disadvan_text, LEFT).shift(LEFT * 1.2)
         self.add(disadvan_list.submobjects[0])
-        self.wait(4)
+        self.wait(5)
         self.add(disadvan_list.submobjects[1])
         self.wait(5)
 
@@ -268,7 +268,7 @@ class VideoScene(Scene):
         self.play(g.edges[(12, 29)].animate.set_color(RED))
         self.play(g[29].animate.set_fill(RED))
         # change graph layout for fun
-        self.play(g.animate.change_layout("spectral"))
+        # self.play(g.animate.change_layout("spectral"))
         self.wait()
 
     def create_ui_matrix(self):
