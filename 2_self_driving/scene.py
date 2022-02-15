@@ -1,5 +1,6 @@
 from manim import *
 import cv2
+import numpy as np
 
 
 class VideoScene(Scene):
@@ -73,4 +74,25 @@ class VideoScene(Scene):
         self.wait()
 
         self.next_section("data from simulation", skip_animations=False)
-        # TODO
+        # animate car moving
+        self.play(car_img.animate.shift(LEFT * 8), run_time=1.5)
+        self.remove(
+            frame_img,
+            vision_net_text, vision_net_box, cameraview_to_visionnet_arrow,
+            vector_space_img, vector_space_text, features_img, features_text,
+            nn_planner_text, nn_planner_box, visionnet_to_nnplanner_arrow,
+            control_text, control_box, nnplanner_to_control_arrow, trajectory_text,
+            control_to_car_arrow, steer_text,
+        )
+        self.wait()
+        # many road pictures
+        road_imgs = [ImageMobject(f"./scene_images/road{i}.png").scale(0.2) for i in range(6)]
+        for i in range(20):
+            x_adjust = (np.random.rand()-0.5) * 9
+            y_adjust = (np.random.rand()-0.7) * 5
+            self.add(road_imgs[i % 6].copy().shift(RIGHT * x_adjust + UP * y_adjust))
+            self.wait(0.2)
+        # create dataset title
+        create_text = Title("Create the Data!")
+        self.play(Create(create_text), FadeOut(car_img))
+        self.wait()
