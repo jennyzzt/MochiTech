@@ -87,12 +87,56 @@ class VideoScene(Scene):
         self.wait()
         # many road pictures
         road_imgs = [ImageMobject(f"./scene_images/road{i}.png").scale(0.2) for i in range(6)]
+        added_road_imgs = []
         for i in range(20):
             x_adjust = (np.random.rand()-0.5) * 9
             y_adjust = (np.random.rand()-0.7) * 5
-            self.add(road_imgs[i % 6].copy().shift(RIGHT * x_adjust + UP * y_adjust))
+            img = road_imgs[i % 6].copy().shift(RIGHT * x_adjust + UP * y_adjust)
+            added_road_imgs.append(img)
+            self.add(img)
             self.wait(0.2)
+        added_road_imgs_grp = Group(*added_road_imgs)
         # create dataset title
         create_text = Title("Create the Data!")
         self.play(Create(create_text), FadeOut(car_img))
+        self.wait()
+        # rare scene video
+        self.play(FadeOut(added_road_imgs_grp))
+        cap = cv2.VideoCapture("./scene_images/rare_scene.mp4")
+        # TODO: change the parameters
+        progress_length = 2  # seconds
+        progress = 0  # seconds
+        frame_length = 0.5  # seconds
+        frame_img = None
+        flag = True
+        while flag and progress < progress_length:
+            flag, frame = cap.read()
+            if flag:
+                if frame_img:
+                    self.remove(frame_img)
+                frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+                frame_img = ImageMobject(frame)
+                self.add(frame_img)
+                self.wait(frame_length)
+                progress += frame_length
+        cap.release()
+        rare_scene_text = Text("Prepare for the most unexpected situations").scale(0.5).next_to(frame_img, DOWN)
+        self.play(Write(rare_scene_text))
+
+        self.next_section("creation of simulation", skip_animations=False)
+        create_sim_title = Title("High-Quality Representaiton of the Real World")
+        self.play(ReplacementTransform(create_text, create_sim_title), FadeOut(rare_scene_text))
+        self.remove(frame_img)
+        # list of simulation creation notes
+        point1_text = Text("1. Accurate sensor simulation").scale(0.5).next_to(create_sim_title, DOWN).to_edge(LEFT).shift(RIGHT + DOWN * 0.5)
+        self.play(Write(point1_text))
+        point2_text = Text("2. Photorealistic rendering").scale(0.5).next_to(point1_text, DOWN).align_to(point1_text, LEFT).shift(DOWN * 0.5)
+        self.play(Write(point2_text))
+        point3_text = Text("3. Diverse actors and locations").scale(0.5).next_to(point2_text, DOWN).align_to(point2_text, LEFT).shift(DOWN * 0.5)
+        self.play(Write(point3_text))
+        point4_text = Text("4. Scalable scenario generation").scale(0.5).next_to(point3_text, DOWN).align_to(point3_text, LEFT).shift(DOWN * 0.5)
+        self.play(Write(point4_text))
+        point5_text = Text("5: Scenario reconstruction").scale(0.5).next_to(point4_text, DOWN).align_to(point4_text, LEFT).shift(DOWN * 0.5)
+        self.play(Write(point5_text))
+
         self.wait()
